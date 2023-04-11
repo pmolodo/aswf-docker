@@ -50,7 +50,7 @@ that have future-proof scalability"""
             not self.options.shared or not self.options.tbbmalloc
         ):
             raise ConanInvalidConfiguration(
-                "tbbproxy needs tbbmaloc and shared options"
+                "tbbproxy needs tbbmalloc and shared options"
             )
 
     def package_id(self):
@@ -135,12 +135,20 @@ MALLOCPROXY.DEF =
         else:
             extra = "" if self.options.shared else "extra_inc=big_iron.inc"
 
-        arch = {
-            "x86": "ia32",
-            "x86_64": "intel64",
-            "armv7": "armv7",
-            "armv8": "aarch64",
-        }[str(self.settings.arch)]
+        if self.settings.os == "Macos":
+            arch = {
+                "x86": "x86",
+                "x86_64": "x86_64",
+                "armv7": "arm",
+                "armv8": "arm64",
+            }[str(self.settings.arch)]
+        else:
+            arch = {
+                "x86": "ia32",
+                "x86_64": "intel64",
+                "armv7": "armv7",
+                "armv8": "aarch64",
+            }[str(self.settings.arch)]
         extra += " arch=%s" % arch
 
         if str(self._base_compiler) in ("gcc", "clang", "apple-clang"):
